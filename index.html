@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title></title>
+	<script type="text/javascript" src="dist/verto.js"></script>
+	<style type="text/css">
+		body {
+			font-family: serif;
+			color: #333;
+		}
+		input, button {
+			border: 1px solid lightgray;
+			padding: 3px;
+			border-radius: 3px;
+		}
+		button {
+			padding-left: 7px;
+			padding-right: 7px;
+			outline: none;
+		}
+		button:active, input:focus {
+			box-shadow: 0 0 3px rgba(120,130,255,1);
+			outline: none;
+		}
+		#call-form {
+			display: none;
+			margin-top:3em;
+		}
+	</style>
+</head>
+<body>
+	<video id="video" autoplay="true" style="display: none"></video>
+	<div>
+		<h1>Verto JS demo</h1>
+		<input type="text" id="id" placeholder="ID">
+		<input type="text" id="passwd" placeholder="Password">
+		<input type="text" id="wss" placeholder="WSS">
+		<button id="connect">Connect</button>
+	</div>
+	<div id="call-form">
+		<input type="text" id="ext" placeholder="Extension">
+		<button id="call">Call</button>
+		<button id="hangup" disabled>Hangup</button>
+	</div>
+	<script type="text/javascript">
+		document.getElementById('id').value = localStorage.id || ""
+		document.getElementById('passwd').value = localStorage.passwd || ""
+		document.getElementById('wss').value = localStorage.wss || ""
+
+		let verto = null
+		let running_call = null
+
+		document.getElementById('connect').addEventListener('click',async () => {
+			localStorage.id = document.getElementById('id').value
+			localStorage.passwd = document.getElementById('passwd').value
+			localStorage.wss = document.getElementById('wss').value
+
+
+			verto = new Verto.Verto({transportConfig:{
+				login: localStorage.id,
+				passwd: localStorage.passwd,
+				socketUrl: localStorage.wss
+			},rtcConfig:{}})
+
+			try {
+				let data = await verto.login()
+			} catch (error) {
+				alert("Access denied")
+				return
+			}
+
+			document.getElementById('connect').disabled = true
+			document.getElementById('call-form').style.display = 'block'
+
+			let stream = await navigator.mediaDevices.getUserMedia({audio:true})
+
+			verto.subscribeEvent('invite', call => {
+
+				call.subscribeEvent('track', (track) => {
+					if(track.kind!='audio') return
+						let stream = new MediaStream()
+					stream.addTrack(track)
+					let el = document.getElementById('video')
+					el.srcObject = stream
+					console.log('track received', track)
+				})
+
+				call.answer(stream.getTracks())
+				document.getElementById('call').disabled = true
+				document.getElementById('hangup').disabled = false
+				running_call = call
+
+			})
+		})
+
+		document.getElementById('call').addEventListener('click',async () => {
+			let stream = await navigator.mediaDevices.getUserMedia({audio:true})
+			document.getElementById('call').disabled = true
+			document.getElementById('hangup').disabled = false
+
+			let call = verto.call(stream.getTracks(), document.getElementById('ext').value || "9664")
+			call.subscribeEvent('track', (track) => {
+				if(track.kind!='audio') return
+					let stream = new MediaStream()
+				stream.addTrack(track)
+				let el = document.getElementById('video')
+				el.srcObject = stream
+				console.log('track received', track)
+			})
+
+			running_call = call
+		})
+
+		document.getElementById('hangup').addEventListener('click',async () => { 
+			running_call.hangup()
+			document.getElementById('call').disabled = false
+			document.getElementById('hangup').disabled = true
+		})
+
+	</script>
+</body>
+</html>
