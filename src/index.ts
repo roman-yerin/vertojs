@@ -31,16 +31,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 import { JsonRpcClient, JsonRpcClientParams } from './json-rpc'
-import { VertoRtc } from './rtc'
+import { VertoRtc, CallDirection } from './rtc'
 import { VertoBase, generateGUID } from './base'
 
 interface VertoOptions {
 	transportConfig	: JsonRpcClientParams
 	rtcConfig?		: RTCConfiguration
+	debug?			: boolean
 }
 
 interface VertoCallOptions {
-
+	caller_id_number?	: string
+	caller_id_name?		: string
+	callee_id_number?	: string
+	callee_id_name?		: string
 }
 
 class VertoCall extends VertoBase{
@@ -48,11 +52,15 @@ class VertoCall extends VertoBase{
 	private rtc: VertoRtc
 	private rpc: JsonRpcClient
 	public id: string
+	public options: VertoCallOptions
+	public direction: CallDirection
 
-	constructor(conf: RTCConfiguration, rpc: JsonRpcClient, dest: string, id?:string){
+	constructor(conf: RTCConfiguration, rpc: JsonRpcClient, dest?: string, id?:string, options?: VertoCallOptions){
 		super()
 		this.id = id || generateGUID()
-		this.rtc = new VertoRtc(conf, dest?1:0)
+		this.options = options || <VertoCallOptions>{}
+		this.direction = dest?CallDirection.Outgoing:CallDirection.Incoming
+		this.rtc = new VertoRtc(conf, this.direction)
 		this.rpc = rpc
 
 		this.rtc.subscribeEvent('send-offer', sessionDescription => {
@@ -116,14 +124,14 @@ class Verto extends VertoBase{
 					break
 				}
 				case 'verto.invite': {
-					let call = new VertoCall(this.options.rtcConfig,this.rpc,'',params.callID)
+					let call = new VertoCall(this.options.rtcConfig,this.rpc,'',params.callID, {caller_id_name: params.caller_id_name, caller_id_number: params.caller_id_number})
 					call.preSdp(params.sdp)
 					this.calls[params.callID] = call
 					this.dispatchEvent('invite',call)
 					break
 				}
 				case 'verto.bye': {
-					let call = new VertoCall(this.options.rtcConfig,this.rpc,'',params.callID)
+					let call = this.calls[params.callID]
 					call.clear()
 					delete this.calls[params.callID]
 					break
@@ -132,7 +140,7 @@ class Verto extends VertoBase{
 		})
 		this.options.rtcConfig = Object.assign(
 			{ iceServers: [{
-				urls: "stun:stun.l.google.com:19302",
+				urls: ["stun:stun.l.google.com:19302"],
 			}]
 		}, this.options.rtcConfig || {})
 
@@ -149,7 +157,7 @@ class Verto extends VertoBase{
 		})
 	}
 
-	call(tracks: Array<MediaStreamTrack>, destination: string, options:VertoCallOptions): VertoCall {
+	call(tracks: Array<MediaStreamTrack>, destination: string, options?:VertoCallOptions): VertoCall {
 		let call = new VertoCall(this.options.rtcConfig, this.rpc, destination)
 
 		for(let track of tracks) call.addTrack(track)
@@ -159,4 +167,4 @@ class Verto extends VertoBase{
 
 }
 
-export { Verto }
+export { Verto, CallDirection }

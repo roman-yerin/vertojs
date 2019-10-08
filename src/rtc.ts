@@ -32,6 +32,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import { VertoBase } from './base'
 
+enum CallDirection {
+	Incoming,
+	Outgoing
+}
+
 /*
 
 Verto RTC is an interface to WebRTC
@@ -42,9 +47,9 @@ class VertoRtc extends VertoBase{
 	private pc: RTCPeerConnection
 	private state: number = 0
 	private presdp: string
-	private direction: number = 0
+	private direction: CallDirection = CallDirection.Incoming
 
-	constructor(conf: RTCConfiguration, direction?: number) {
+	constructor(conf: RTCConfiguration, direction?: CallDirection) {
 		super()
 		this.pc = new RTCPeerConnection(conf)
 		this.pc.ontrack = this.onTrack.bind(this)
@@ -114,4 +119,4 @@ class VertoRtc extends VertoBase{
 
 }
 
-export { VertoRtc }
+export { VertoRtc, CallDirection }

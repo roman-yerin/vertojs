@@ -84,7 +84,7 @@ class VertoBase {
 	}
 
 	dispatchEvent(name: string, data?: any){
-		console.log('Dispatch', name, this.event_handlers[name])
+		console.log('Dispatch', name, data)
 		if(this.event_handlers[name])
 		for(let h of this.event_handlers[name]){
 			h.code(data)

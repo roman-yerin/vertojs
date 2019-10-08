@@ -37,14 +37,14 @@ Interface to JSON RPC Client constructor
 */
 
 interface JsonRpcClientParams {
-	socketUrl		:	string,
-	ajaxUrl?		:	string,
-	onmessage?		:	{(event:Object):void},
-	login			:	string,
-	passwd			:	string,
-	sessid?			:	string,
-	loginParams?	:	Object,
-	userVariables?	:	Object,
+	socketUrl		:	string
+	ajaxUrl?		:	string
+	onmessage?		:	{(event:Object):void}
+	login			:	string
+	passwd			:	string
+	sessid?			:	string
+	loginParams?	:	Object
+	userVariables?	:	Object
 }
 
 /*
@@ -54,9 +54,9 @@ Interface to JSON RPC requests
 */
 
 interface JsonRpcRequest {
-	id		: number,
-	jsonrpc	: string,
-	method	: string,
+	id		: number
+	jsonrpc	: string
+	method	: string
 	params	: Object
 }
 
@@ -67,11 +67,11 @@ Interface to JSON RPC replies
 */
 
 interface JsonRpcReply {
-	id			: number,
-	jsonrpc		: string,
-	method?		: string,
-	params?		: JsonRpcParams,
-	result?		: any,
+	id			: number
+	jsonrpc		: string
+	method?		: string
+	params?		: JsonRpcParams
+	result?		: any
 	error?		: {code?:number}
 }
 
@@ -82,14 +82,19 @@ Interface to JSON RPC calls
 */
 
 interface JsonRpcCall {
-	request: JsonRpcRequest, 
-	success_cb?: {(data: Object): void}, 
+	request: JsonRpcRequest 
+	success_cb?: {(data: Object): void} 
 	error_cb?: {(data: Object): void}
 }
 
 interface JsonRpcParams {
-	callID		: string,
-	sdp?		: string 
+	callID				: string
+	sdp?				: string
+	caller_id_number	: string
+	caller_id_name		: string
+	callee_id_number	: string
+	callee_id_name		: string
+
 }
 
 /*
