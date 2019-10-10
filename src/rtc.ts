@@ -44,13 +44,17 @@ Verto RTC is an interface to WebRTC
 */
 
 class VertoRtc extends VertoBase{
-	private pc: RTCPeerConnection
-	private state: number = 0
-	private presdp: string
-	private direction: CallDirection = CallDirection.Incoming
+	private pc			: RTCPeerConnection
+	private state 		: number = 0
+	private presdp		: string
+	private direction	: CallDirection = CallDirection.Incoming
+	private ice_timer	: ReturnType<typeof setTimeout>
+	private ice_timeout	: number
 
-	constructor(conf: RTCConfiguration, direction?: CallDirection) {
+	constructor(conf: RTCConfiguration, direction?: CallDirection, ice_timeout?: number) {
 		super()
+		this.ice_timeout = (ice_timeout?ice_timeout:3000)
+		conf.iceCandidatePoolSize = ('iceCandidatePoolSize' in conf? conf.iceCandidatePoolSize: 1)
 		this.pc = new RTCPeerConnection(conf)
 		this.pc.ontrack = this.onTrack.bind(this)
 		this.pc.onnegotiationneeded = this.onNegotiation.bind(this)
@@ -68,6 +72,7 @@ class VertoRtc extends VertoBase{
 
 	private onIceGatheringStateChange(event: Event){
 		if(this.pc.iceGatheringState == 'complete') {
+			if(this.ice_timer) clearTimeout(this.ice_timer)
 			if(this.direction) 
 				this.dispatchEvent('send-offer',this.pc.localDescription)
 			else 
@@ -75,10 +80,19 @@ class VertoRtc extends VertoBase{
 		}
 	}
 
+	private iceTimerTriggered() {
+		console.log(this.pc)
+		if(this.direction) 
+			this.dispatchEvent('send-offer',this.pc.localDescription)
+		else 
+			this.dispatchEvent('send-answer',this.pc.localDescription)
+	}
+
 	private onNegotiation() {
 		this.pc
 		.createOffer()
 		.then(offer => {
+			this.ice_timer = setTimeout(this.iceTimerTriggered.bind(this), this.ice_timeout)
 			return this.pc.setLocalDescription(offer)
 		})
 		.then(() => {
@@ -108,6 +122,7 @@ class VertoRtc extends VertoBase{
 
 	answer(tracks: Array<MediaStreamTrack>) {
 		for(let t of tracks) this.pc.addTrack(t)
+		this.ice_timer = setTimeout(this.iceTimerTriggered.bind(this), this.ice_timeout)
 		this.pc.setRemoteDescription(new RTCSessionDescription({type: 'offer', sdp: this.presdp}))
 		.then(() => {
 			this.pc.createAnswer()
