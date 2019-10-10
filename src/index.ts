@@ -110,6 +110,7 @@ class Verto extends VertoBase{
 	private rpc			: JsonRpcClient
 	private options		: VertoOptions
 	private sessid		: string
+	private logged_in	: boolean = false
 	
 	constructor(options: VertoOptions) {
 		// 
@@ -138,6 +139,9 @@ class Verto extends VertoBase{
 				}
 			}
 		})
+		this.rpc.setReconnectHandler(() => {
+			if(this.logged_in) this.login()
+		})
 		this.options.rtcConfig = Object.assign(
 			{ iceServers: [{
 				urls: ["stun:stun.l.google.com:19302"],
@@ -150,6 +154,7 @@ class Verto extends VertoBase{
 		return new Promise((resolve, reject) => {
 			this.rpc.call('login', {login: this.options.transportConfig.login, passwd: this.options.transportConfig.passwd}, (data: {sessid:string}) => {
 				this.sessid = data.sessid
+				this.logged_in = true
 				resolve(data)
 			}, (data: Object) => {
 				reject(data)

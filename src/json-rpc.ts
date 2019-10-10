@@ -111,23 +111,34 @@ class JsonRpcClient {
 	private queue: Array<string> = []
 	private callbacks: Array<JsonRpcCall> = []
 	private eventHandler: {(method:string, params:JsonRpcParams):void}
+	private reconnectHandler: {():void}
+
+	private initSocket_(){
+		this.socket_ = new WebSocket(this.options.socketUrl)
+		this.socket_.onmessage = this.onMessage.bind(this)
+		// TODO: Implement auto reconnect attepts
+		this.socket_.onclose = () => {
+			setTimeout(() => {
+				console.log("WSS reconnect")
+				this.initSocket_()
+			}, 1000)
+		}
+		this.socket_.onopen = () => {
+			let req: string = ""
+			if(this.reconnectHandler) this.reconnectHandler()
+
+			while(req = this.queue.pop()){
+				this.socket.send(req)
+			}
+		}
+	}
 
 	private get socket(): WebSocket {
 
 		if(this.socket_) {
 			return this.socket_
 		}
-
-		this.socket_ = new WebSocket(this.options.socketUrl)
-		this.socket_.onmessage = this.onMessage.bind(this)
-		// TODO: Implement auto reconnect attepts
-		this.socket_.onclose = () => {}
-		this.socket_.onopen = () => {
-			let req: string = ""
-			while(req = this.queue.pop()){
-				this.socket.send(req)
-			}
-		}
+		this.initSocket_()
 		return this.socket_
 
 	}
@@ -204,6 +215,10 @@ class JsonRpcClient {
 
 	public setEventHandler(handler: {(method: string, params: JsonRpcParams):void}){
 		this.eventHandler = handler
+	}
+
+	public setReconnectHandler(handler: {():void}){
+		this.reconnectHandler = handler
 	}
 
 	public call(method: string, params?: Object, success_cb?: {(data: Object): void}, error_cb?: {(data: Object): void}) {
