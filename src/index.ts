@@ -144,10 +144,7 @@ class Verto extends VertoBase{
 			if(this.logged_in) this.login()
 		})
 		this.options.rtcConfig = Object.assign(
-			{ iceServers: [{
-				urls: ["stun:stun.l.google.com:19302"],
-			}]
-		}, this.options.rtcConfig || {})
+			{}, this.options.rtcConfig || {})
 
 	}
 
