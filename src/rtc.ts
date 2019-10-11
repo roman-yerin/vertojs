@@ -37,6 +37,12 @@ enum CallDirection {
 	Outgoing
 }
 
+enum CallState {
+	None,
+	Schedulled,
+	MessageSent,
+}
+
 /*
 
 Verto RTC is an interface to WebRTC
@@ -45,7 +51,7 @@ Verto RTC is an interface to WebRTC
 
 class VertoRtc extends VertoBase{
 	private pc			: RTCPeerConnection
-	private state 		: number = 0
+	private state 		: CallState = CallState.None
 	private presdp		: string
 	private direction	: CallDirection = CallDirection.Incoming
 	private ice_timer	: ReturnType<typeof setTimeout>
@@ -73,6 +79,7 @@ class VertoRtc extends VertoBase{
 	private onIceGatheringStateChange(event: Event){
 		if(this.pc.iceGatheringState == 'complete') {
 			if(this.ice_timer) clearTimeout(this.ice_timer)
+			if(this.state == CallState.MessageSent) return // Offer or answer is already sent
 			if(this.direction) 
 				this.dispatchEvent('send-offer',this.pc.localDescription)
 			else 
@@ -82,6 +89,8 @@ class VertoRtc extends VertoBase{
 
 	private iceTimerTriggered() {
 		if(this.debug) console.log(this.pc)
+		if(this.state != CallState.Schedulled) return // The call is not in schedulled state, do nothing
+		this.state = CallState.MessageSent
 		if(this.direction) 
 			this.dispatchEvent('send-offer',this.pc.localDescription)
 		else 
@@ -96,8 +105,8 @@ class VertoRtc extends VertoBase{
 			return this.pc.setLocalDescription(offer)
 		})
 		.then(() => {
-			// Send offer to remote host
-			this.state = 1
+			// Schedulle offer to remote host
+			this.state = CallState.Schedulled
 		})
 		.catch(error => {})
 	}
@@ -128,6 +137,7 @@ class VertoRtc extends VertoBase{
 			this.pc.createAnswer()
 			.then(description => {
 				this.pc.setLocalDescription(description)
+				this.state = CallState.Schedulled
 			})
 		})
 	}
