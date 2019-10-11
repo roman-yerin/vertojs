@@ -57,11 +57,17 @@
 			localStorage.wss = document.getElementById('wss').value
 
 
-			verto = new Verto.Verto({transportConfig:{
-				login: localStorage.id,
-				passwd: localStorage.passwd,
-				socketUrl: localStorage.wss
-			},rtcConfig:{}})
+			verto = new Verto.Verto({
+				transportConfig:{
+					login: localStorage.id,
+					passwd: localStorage.passwd,
+					socketUrl: localStorage.wss
+				},rtcConfig:{
+					//iceServers: [{urls:"stun:pbx0-tirade-dev.rtclogic.com"}]
+				},
+				debug: false,
+				ice_timeout: 5000
+			})
 
 			try {
 				let data = await verto.login()

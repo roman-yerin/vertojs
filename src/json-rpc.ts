@@ -112,6 +112,7 @@ class JsonRpcClient {
 	private callbacks: Array<JsonRpcCall> = []
 	private eventHandler: {(method:string, params:JsonRpcParams):void}
 	private reconnectHandler: {():void}
+	private debug: boolean = false
 
 	private initSocket_(){
 		this.socket_ = new WebSocket(this.options.socketUrl)
@@ -119,7 +120,7 @@ class JsonRpcClient {
 		// TODO: Implement auto reconnect attepts
 		this.socket_.onclose = () => {
 			setTimeout(() => {
-				console.log("WSS reconnect")
+				if(this.debug) console.log("WSS reconnect")
 				this.initSocket_()
 			}, 1000)
 		}
@@ -143,7 +144,8 @@ class JsonRpcClient {
 
 	}
 
-	constructor(options: JsonRpcClientParams) {
+	constructor(options: JsonRpcClientParams, debug?: boolean) {
+		this.debug = debug
 		this.options = Object.assign({
 		}, options)
 	}
@@ -158,7 +160,7 @@ class JsonRpcClient {
 			// Got something else, just ignore in case
 		}
 
-		console.log(response)
+		if(this.debug) console.log(response)
 
 		if(typeof response === 'object'
 			&& 'jsonrpc' in response
@@ -206,10 +208,10 @@ class JsonRpcClient {
 		if(this.socket.readyState < 1) {
 			// Socket is not ready, queue message
 			this.queue.push(rawData)
-			console.log('Queued', rawData)
+			if(this.debug) console.log('Queued', rawData)
 		} else {
 			this.socket.send(rawData)
-			console.log('Sent', rawData)
+			if(this.debug) console.log('Sent', rawData)
 		}
 	}
 

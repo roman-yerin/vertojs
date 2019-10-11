@@ -51,8 +51,8 @@ class VertoRtc extends VertoBase{
 	private ice_timer	: ReturnType<typeof setTimeout>
 	private ice_timeout	: number
 
-	constructor(conf: RTCConfiguration, direction?: CallDirection, ice_timeout?: number) {
-		super()
+	constructor(conf: RTCConfiguration, direction?: CallDirection, ice_timeout?: number, debug?: boolean) {
+		super(debug)
 		this.ice_timeout = (ice_timeout?ice_timeout:3000)
 		conf.iceCandidatePoolSize = ('iceCandidatePoolSize' in conf? conf.iceCandidatePoolSize: 1)
 		this.pc = new RTCPeerConnection(conf)
@@ -81,7 +81,7 @@ class VertoRtc extends VertoBase{
 	}
 
 	private iceTimerTriggered() {
-		console.log(this.pc)
+		if(this.debug) console.log(this.pc)
 		if(this.direction) 
 			this.dispatchEvent('send-offer',this.pc.localDescription)
 		else 
@@ -105,10 +105,10 @@ class VertoRtc extends VertoBase{
 	onAnswer(sdp: string) {
 		this.pc.setRemoteDescription(new RTCSessionDescription({type: 'answer', sdp}))
 		.then(() => {
-			console.log('answered')
+			if(this.debug) console.log('answered')
 		})
 		.catch(error => {
-			console.log('answer error', error)
+			if(this.debug) console.log('answer error', error)
 		})
 	}
 

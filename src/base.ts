@@ -64,9 +64,10 @@ interface VertoEventHandler {
 class VertoBase {
 
 	private event_handlers: {[name: string]: Array<VertoEventHandler>} = {}
+	public debug: boolean
 
-	constructor(){
-
+	constructor(debug?: boolean){
+		this.debug = debug
 	}
 
 	subscribeEvent(name: string, handler: {(data:any):void}){
@@ -84,7 +85,7 @@ class VertoBase {
 	}
 
 	dispatchEvent(name: string, data?: any){
-		console.log('Dispatch', name, data)
+		if(this.debug) console.log('Dispatch', name, data)
 		if(this.event_handlers[name])
 		for(let h of this.event_handlers[name]){
 			h.code(data)

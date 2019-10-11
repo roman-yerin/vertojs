@@ -38,6 +38,7 @@ interface VertoOptions {
 	transportConfig	: JsonRpcClientParams
 	rtcConfig?		: RTCConfiguration
 	debug?			: boolean
+	ice_timeout?	: number
 }
 
 interface VertoCallOptions {
@@ -55,12 +56,12 @@ class VertoCall extends VertoBase{
 	public options: VertoCallOptions
 	public direction: CallDirection
 
-	constructor(conf: RTCConfiguration, rpc: JsonRpcClient, dest?: string, id?:string, options?: VertoCallOptions){
-		super()
+	constructor(conf: RTCConfiguration, rpc: JsonRpcClient, dest?: string, id?:string, options?: VertoCallOptions, ice_timeout?: number, debug?: boolean){
+		super(debug)
 		this.id = id || generateGUID()
 		this.options = options || <VertoCallOptions>{}
 		this.direction = dest?CallDirection.Outgoing:CallDirection.Incoming
-		this.rtc = new VertoRtc(conf, this.direction)
+		this.rtc = new VertoRtc(conf, this.direction, ice_timeout, debug)
 		this.rpc = rpc
 
 		this.rtc.subscribeEvent('send-offer', sessionDescription => {
@@ -114,9 +115,9 @@ class Verto extends VertoBase{
 	
 	constructor(options: VertoOptions) {
 		// 
-		super()
+		super(options.debug)
 		this.options = options
-		this.rpc = new JsonRpcClient(options.transportConfig)
+		this.rpc = new JsonRpcClient(options.transportConfig, options.debug)
 		this.rpc.setEventHandler((method, params) => {
 			switch(method) {
 				case 'verto.answer': {
@@ -125,7 +126,7 @@ class Verto extends VertoBase{
 					break
 				}
 				case 'verto.invite': {
-					let call = new VertoCall(this.options.rtcConfig,this.rpc,'',params.callID, {caller_id_name: params.caller_id_name, caller_id_number: params.caller_id_number})
+					let call = new VertoCall(this.options.rtcConfig,this.rpc,'',params.callID, {caller_id_name: params.caller_id_name, caller_id_number: params.caller_id_number}, this.options.ice_timeout, this.options.debug)
 					call.preSdp(params.sdp)
 					this.calls[params.callID] = call
 					this.dispatchEvent('invite',call)
@@ -163,7 +164,7 @@ class Verto extends VertoBase{
 	}
 
 	call(tracks: Array<MediaStreamTrack>, destination: string, options?:VertoCallOptions): VertoCall {
-		let call = new VertoCall(this.options.rtcConfig, this.rpc, destination)
+		let call = new VertoCall(this.options.rtcConfig, this.rpc, destination, generateGUID(), {}, this.options.ice_timeout, this.options.debug)
 
 		for(let track of tracks) call.addTrack(track)
 		this.calls[call.id] = call
