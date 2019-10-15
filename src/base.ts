@@ -70,10 +70,11 @@ class VertoBase {
 		this.debug = debug
 	}
 
-	subscribeEvent(name: string, handler: {(data:any):void}){
+	subscribeEvent(name: string, handler: {(data:any):void}):string{
 		let id = generateGUID()
 		if(!this.event_handlers[name]) this.event_handlers[name] = []
 		this.event_handlers[name].push({id, code: handler})
+		return id 
 	}
 
 	unsubscribeEvent(name: string, handlerID?: string){
