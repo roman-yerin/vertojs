@@ -65,7 +65,10 @@ class VertoCall extends VertoBase{
 		this.rpc = rpc
 
 		this.rtc.subscribeEvent('send-offer', sessionDescription => {
-			this.rpc.call('verto.invite', { dialogParams: {destination_number: dest, callID: this.id}, sdp: sessionDescription.sdp}, data => {}, data => {})
+			let dialogParams = Object.assign({}, this.options)
+			dialogParams = Object.assign(dialogParams, {destination_number: dest, callID: this.id})
+			
+			this.rpc.call('verto.invite', { dialogParams, sdp: sessionDescription.sdp}, data => {}, data => {})
 		})
 
 		this.rtc.subscribeEvent('send-answer', sessionDescription => {
@@ -161,7 +164,7 @@ class Verto extends VertoBase{
 	}
 
 	call(tracks: Array<MediaStreamTrack>, destination: string, options?:VertoCallOptions): VertoCall {
-		let call = new VertoCall(this.options.rtcConfig, this.rpc, destination, generateGUID(), {}, this.options.ice_timeout, this.options.debug)
+		let call = new VertoCall(this.options.rtcConfig, this.rpc, destination, generateGUID(), options, this.options.ice_timeout, this.options.debug)
 
 		for(let track of tracks) call.addTrack(track)
 		this.calls[call.id] = call
