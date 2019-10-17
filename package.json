@@ -16,7 +16,7 @@
   "bugs": {
     "url": "https://github.com/roman-yerin/vertojs/issues"
   },
-  "homepage": "https://github.com/roman-yerin/vertojs#readme"
+  "homepage": "https://github.com/roman-yerin/vertojs#readme",
   "devDependencies": {
     "@types/ws": "^6.0.3",
     "https": "^1.0.0",
