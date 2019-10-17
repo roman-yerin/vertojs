@@ -1,10 +1,22 @@
 {
-  "name": "verto",
-  "version": "1.0.0",
+  "name": "vertojs",
+  "version": "0.0.2",
   "description": "Verto FreeSWITCH interface",
   "main": "src/index.ts",
   "author": "Roman Yerin <r.yerin@640kb.co.uk>",
   "license": "BSD-3-Clause",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/roman-yerin/vertojs.git"
+  },
+  "keywords": [
+    "verto",
+    "freeswitch"
+  ],
+  "bugs": {
+    "url": "https://github.com/roman-yerin/vertojs/issues"
+  },
+  "homepage": "https://github.com/roman-yerin/vertojs#readme"
   "devDependencies": {
     "@types/ws": "^6.0.3",
     "https": "^1.0.0",
