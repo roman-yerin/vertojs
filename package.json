@@ -1,6 +1,6 @@
 {
   "name": "vertojs",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Verto FreeSWITCH interface",
   "main": "src/index.ts",
   "author": "Roman Yerin <r.yerin@640kb.co.uk>",

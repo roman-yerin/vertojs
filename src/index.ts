@@ -98,8 +98,8 @@ class VertoCall extends VertoBase{
 		this.rtc.answer(tracks)
 	}
 
-	hangup() {
-		this.rpc.call('verto.bye', { dialogParams: {callID: this.id}}, data => {}, data => {})
+	hangup(params = {}) {
+		this.rpc.call('verto.bye', { dialogParams: {callID: this.id}, ...params}, data => {}, data => {})
 		this.clear()
 	}
 

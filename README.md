@@ -298,7 +298,7 @@ verto.subscribeEvent('invite', call => {
 Fires when the call is ended.
 
 ```typescript
-call.subscribeEvent('bye', () => {
+call.subscribeEvent('bye', cause => {
     // Do something on call end
 })
 ```
