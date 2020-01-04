@@ -2,7 +2,7 @@
 
 Verto (VER-to) RTC is a FreeSWITCH endpoint that implements a subset of a JSON-RPC connection designed for use over secure websockets. The initial target is WebRTC to simplify coding and implementing calls from web browsers and devices to FreeSWITCH. This allows a web browser or other WebRTC client to originate a call using Verto into a FreeSWITCH installation and then out to the PSTN using SIP, SS7, or other supported protocol.
 
-This is a zero-dependency implementation that is no need to include jquery as an in original one. It doesn't contain any html stuff inside or media handlers as well. You should
+This is a zero-dependency implementation that is no need to include jquery as in an original one. It doesn't contain any html stuff inside or media handlers as well. You should
 take care of fetch media tracks yourself (I think it is better not to hide useful features of you, browser provides a great API to handle media)
 
 ## Status
