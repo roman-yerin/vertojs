@@ -171,6 +171,9 @@ class Verto extends VertoBase{
 		return call
 	}
 
+	isLogged(): boolean {
+		return this.logged_in
+	}
 }
 
 export { Verto, CallDirection }
