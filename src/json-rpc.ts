@@ -134,6 +134,13 @@ class JsonRpcClient {
 		}
 	}
 
+    private closeSocket_(){
+        this.socket_.onclose = () => {
+            console.log("WebSocket is closed now.");
+        }
+        this.socket_.close()
+    }
+
 	private get socket(): WebSocket {
 
 		if(this.socket_) {
@@ -239,6 +246,13 @@ class JsonRpcClient {
 		}
 	}
 
+    public close() {
+        this.queue = []
+        this.callbacks = []
+        this.eventHandler = null
+        this.reconnectHandler = null
+        this.closeSocket_()
+    }
 }
 
 export { JsonRpcClient, JsonRpcClientParams }

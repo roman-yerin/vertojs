@@ -189,6 +189,19 @@ verto.login()
 let call = verto.call(tracks, destination, options)
 ```
 
+**logOut**
+
+***Parameters***
+
+- None
+
+***Returns***
+
+- Void
+
+```typescript
+verto.logOut()
+```
 ### Events
 
 #### invite
