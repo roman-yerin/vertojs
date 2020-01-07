@@ -9,7 +9,7 @@ let verto = new Verto({transportConfig:{
 
 async function main(){
 	try {
-		let data = await verto.login()	
+		let data = await verto.login()
 
 		let stream = await navigator.mediaDevices.getUserMedia({audio:true})
 
