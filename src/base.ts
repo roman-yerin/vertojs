@@ -30,13 +30,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-
 const generateGUID = (typeof(window.crypto) !== 'undefined' && typeof(window.crypto.getRandomValues) !== 'undefined') ?
-function() {
-	var buf = new Uint16Array(8)
+function(): string {
+	let buf = new Uint16Array(8)
 	window.crypto.getRandomValues(buf)
-	var S4 = function(num:number) {
-		var ret = num.toString(16)
+    let S4 = function(num:number) {
+		let ret = num.toString(16)
 		while (ret.length < 4) {
 			ret = "0" + ret
 		}
@@ -47,9 +46,9 @@ function() {
 
 :
 
-function() {
+function(): string {
 	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-		var r = Math.random() * 16 | 0,
+		let r = Math.random() * 16 | 0,
 		v = c == 'x' ? r : (r & 0x3 | 0x8)
 		return v.toString(16)
 	})
