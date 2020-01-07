@@ -171,6 +171,20 @@ class Verto extends VertoBase{
 		return call
 	}
 
+    logout(){
+        if (this.calls) {
+            Object.keys(this.calls).forEach(
+                key => {
+                    this.calls[key].hangup()
+                }
+            )
+        }
+        this.rpc.close()
+        this.rpc = null
+        this.sessid = null
+        this.logged_in = false
+    }
+
 }
 
 export { Verto, CallDirection }
