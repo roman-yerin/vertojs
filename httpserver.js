@@ -20,7 +20,7 @@ var server = http.createServer(options, function(request, response) {
       fs.createReadStream(filename, {
         'flags': 'r',
         'encoding': 'binary',
-        'mode': 0666,
+        'mode': 0o666,
         'bufferSize': 4 * 1024
       }).addListener( "data", function(chunk) {
         response.write(chunk, 'binary')
