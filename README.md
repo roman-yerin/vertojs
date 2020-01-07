@@ -189,6 +189,20 @@ verto.login()
 let call = verto.call(tracks, destination, options)
 ```
 
+**isLogged**
+
+***Parameters***
+
+- None
+
+***Returns***
+
+- Boolean
+
+```typescript
+let isLogged = verto.isLogged()
+```
+
 **logOut**
 
 ***Parameters***

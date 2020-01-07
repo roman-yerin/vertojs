@@ -151,7 +151,7 @@ class Verto extends VertoBase{
 
 	}
 
-	login(){
+	login(): Promise<any>{
 		return new Promise((resolve, reject) => {
 			this.rpc.call('login', {login: this.options.transportConfig.login, passwd: this.options.transportConfig.passwd}, (data: {sessid:string}) => {
 				this.sessid = data.sessid
@@ -169,6 +169,10 @@ class Verto extends VertoBase{
 		for(let track of tracks) call.addTrack(track)
 		this.calls[call.id] = call
 		return call
+	}
+
+	isLogged(): boolean {
+		return this.logged_in
 	}
 
     logout(){

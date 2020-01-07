@@ -84,7 +84,7 @@
 			verto.subscribeEvent('invite', call => {
 
 				call.subscribeEvent('track', (track) => {
-					if(track.kind!='audio') return
+					if(track.kind !== 'audio') return
 						let stream = new MediaStream()
 					stream.addTrack(track)
 					let el = document.getElementById('video')
@@ -96,7 +96,6 @@
 				document.getElementById('call').disabled = true
 				document.getElementById('hangup').disabled = false
 				running_call = call
-
 			})
 		})
 
@@ -107,7 +106,7 @@
 
 			let call = verto.call(stream.getTracks(), document.getElementById('ext').value || "9664")
 			call.subscribeEvent('track', (track) => {
-				if(track.kind!='audio') return
+				if(track.kind !== 'audio') return
 					let stream = new MediaStream()
 				stream.addTrack(track)
 				let el = document.getElementById('video')
@@ -118,7 +117,7 @@
 			running_call = call
 		})
 
-		document.getElementById('hangup').addEventListener('click',async () => { 
+		document.getElementById('hangup').addEventListener('click',async () => {
 			running_call.hangup()
 			document.getElementById('call').disabled = false
 			document.getElementById('hangup').disabled = true
