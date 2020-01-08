@@ -61,7 +61,6 @@ const vertoDisplay = 'verto.display'
 const vertoClientReady = 'verto.clientReady'
 const vertoBroadcast = 'verto.broadcast'
 
-
 class VertoCall extends VertoBase{
 
 	private rtc: VertoRtc
