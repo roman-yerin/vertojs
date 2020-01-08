@@ -203,6 +203,19 @@ let call = verto.call(tracks, destination, options)
 let isLogged = verto.isLogged()
 ```
 
+**logOut**
+
+***Parameters***
+
+- None
+
+***Returns***
+
+- Void
+
+```typescript
+verto.logOut()
+```
 ### Events
 
 #### invite

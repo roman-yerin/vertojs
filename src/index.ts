@@ -229,6 +229,21 @@ class Verto extends VertoBase{
 	isLogged(): boolean {
 		return this.logged_in
 	}
+
+    logout(){
+        if (this.calls) {
+            Object.keys(this.calls).forEach(
+                key => {
+                    this.calls[key].hangup()
+                }
+            )
+        }
+        this.rpc.close()
+        this.rpc = null
+        this.sessid = null
+        this.logged_in = false
+    }
+
 }
 
 export { Verto, CallDirection }
