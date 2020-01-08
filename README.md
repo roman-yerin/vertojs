@@ -277,14 +277,14 @@ call.hangup()
 
 ***Parameters***
 
-- None
+- String
 
 ***Returns***
 
 - None
 
 ```typescript
-call.dtmf()
+call.dtmf('5')
 ```
 
 **hold**
