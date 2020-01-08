@@ -96,10 +96,18 @@ class VertoCall extends VertoBase{
 	}
 
 	onAnswer(sdp: string) {
-		this.rtc.onAnswer(sdp)
+		if (sdp) {
+            this.rtc.onMedia(sdp)
+		}
+        if(this.debug) console.log('answer')
 		this.dispatchEvent('answer')
 	}
-	
+
+	onMedia(sdp: string) {
+		this.rtc.onMedia(sdp)
+		this.dispatchEvent('media')
+	}
+
 	addTrack(track: MediaStreamTrack){
 		this.rtc.addTrack(track)
 	}
@@ -183,6 +191,11 @@ class Verto extends VertoBase{
 					this.calls[callID].onAnswer(params.sdp)
 					break
 				}
+				case vertoMedia: {
+					let callID: string = params.callID
+					this.calls[callID].onMedia(params.sdp)
+					break
+				}
 				case vertoInvite: {
 					let call = new VertoCall(this.options.rtcConfig,this.rpc,'',params.callID, {caller_id_name: params.caller_id_name, caller_id_number: params.caller_id_number}, this.options.ice_timeout, this.options.debug)
 					call.preSdp(params.sdp)
@@ -229,6 +242,21 @@ class Verto extends VertoBase{
 	isLogged(): boolean {
 		return this.logged_in
 	}
+
+    logout(){
+        if (this.calls) {
+            Object.keys(this.calls).forEach(
+                key => {
+                    this.calls[key].hangup()
+                }
+            )
+        }
+        this.rpc.close()
+        this.rpc = null
+        this.sessid = null
+        this.logged_in = false
+    }
+
 }
 
 export { Verto, CallDirection }
