@@ -129,8 +129,8 @@ class VertoCall extends VertoBase{
 		this.dispatchEvent('bye', this)
 	}
 
-	dtmf(digits: number) {
-        this.rpc.call(vertoInfo, { dtmf: digits.toString(), dialogParams: {callID: this.id}}, data => {}, data => {})
+	dtmf(input: string) {
+        this.rpc.call(vertoInfo, { dtmf: input.toString(), dialogParams: {callID: this.id}}, data => {}, data => {})
 	}
 
     hold(params?: object) {
