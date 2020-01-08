@@ -96,10 +96,18 @@ class VertoCall extends VertoBase{
 	}
 
 	onAnswer(sdp: string) {
-		this.rtc.onAnswer(sdp)
+		if (sdp) {
+            this.rtc.onMedia(sdp)
+		}
+        if(this.debug) console.log('answer')
 		this.dispatchEvent('answer')
 	}
-	
+
+	onMedia(sdp: string) {
+		this.rtc.onMedia(sdp)
+		this.dispatchEvent('media')
+	}
+
 	addTrack(track: MediaStreamTrack){
 		this.rtc.addTrack(track)
 	}
@@ -181,6 +189,11 @@ class Verto extends VertoBase{
 				case vertoAnswer: {
 					let callID: string = params.callID
 					this.calls[callID].onAnswer(params.sdp)
+					break
+				}
+				case vertoMedia: {
+					let callID: string = params.callID
+					this.calls[callID].onMedia(params.sdp)
 					break
 				}
 				case vertoInvite: {

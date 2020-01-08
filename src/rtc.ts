@@ -111,13 +111,13 @@ class VertoRtc extends VertoBase{
 		.catch(error => {})
 	}
 
-	onAnswer(sdp: string) {
+	onMedia(sdp: string) {
 		this.pc.setRemoteDescription(new RTCSessionDescription({type: 'answer', sdp}))
 		.then(() => {
-			if(this.debug) console.log('answered')
+			if(this.debug) console.log('got remote media')
 		})
 		.catch(error => {
-			if(this.debug) console.log('answer error', error)
+			if(this.debug) console.log('remote media error', error)
 		})
 	}
 
