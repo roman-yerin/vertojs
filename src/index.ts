@@ -48,6 +48,19 @@ interface VertoCallOptions {
 	callee_id_name?		: string
 }
 
+const vertoInvite = 'verto.invite'
+const vertoAnswer = 'verto.answer'
+const vertoBye = 'verto.bye'
+const vertoMedia = 'verto.media'
+const vertoAttach = 'verto.attach'
+const vertoModify = 'verto.modify'
+const vertoSubscribe = 'verto.subscribe'
+const vertoUnsubscribe = 'verto.unsubscribe'
+const vertoInfo = 'verto.info'
+const vertoDisplay = 'verto.display'
+const vertoClientReady = 'verto.clientReady'
+const vertoBroadcast = 'verto.broadcast'
+
 class VertoCall extends VertoBase{
 
 	private rtc: VertoRtc
@@ -55,6 +68,7 @@ class VertoCall extends VertoBase{
 	public id: string
 	public options: VertoCallOptions
 	public direction: CallDirection
+	public holdStatus: boolean
 
 	constructor(conf: RTCConfiguration, rpc: JsonRpcClient, dest?: string, id?:string, options?: VertoCallOptions, ice_timeout?: number, debug?: boolean){
 		super(debug)
@@ -68,11 +82,11 @@ class VertoCall extends VertoBase{
 			let dialogParams = Object.assign({}, this.options)
 			dialogParams = Object.assign(dialogParams, {destination_number: dest, callID: this.id})
 			
-			this.rpc.call('verto.invite', { dialogParams, sdp: sessionDescription.sdp}, data => {}, data => {})
+			this.rpc.call(vertoInvite, { dialogParams, sdp: sessionDescription.sdp}, data => {}, data => {})
 		})
 
 		this.rtc.subscribeEvent('send-answer', sessionDescription => {
-			this.rpc.call('verto.answer', { dialogParams: {destination_number: dest, callID: this.id}, sdp: sessionDescription.sdp}, data => {}, data => {})
+			this.rpc.call(vertoAnswer, { dialogParams: {destination_number: dest, callID: this.id}, sdp: sessionDescription.sdp}, data => {}, data => {})
 		})
 
 		this.rtc.subscribeEvent('track', track => {
@@ -107,13 +121,54 @@ class VertoCall extends VertoBase{
 	}
 
 	hangup(params = {}) {
-		this.rpc.call('verto.bye', { dialogParams: {callID: this.id}, ...params}, data => {}, data => {})
+		this.rpc.call(vertoBye, { dialogParams: {callID: this.id}, ...params}, data => {}, data => {})
 		this.clear()
 	}
 
 	clear() {
 		this.dispatchEvent('bye', this)
 	}
+
+	dtmf(digits: number) {
+        this.rpc.call(vertoInfo, { dtmf: digits.toString(), dialogParams: {callID: this.id}}, data => {}, data => {})
+	}
+
+    hold(params?: object) {
+		this.rpc.call(vertoModify, {action: "hold", dialogParams: {callID: this.id, ...this.options, ...params}},(data: {holdState:string}) => {
+			if (data.holdState === 'held') {
+				this.holdStatus = true
+                this.dispatchEvent('hold', this)
+			} else {
+                this.holdStatus = false
+                this.dispatchEvent('unhold', this)
+			}
+		}, data => {})
+	}
+
+    unhold(params?: object) {
+        this.rpc.call(vertoModify, {action: "unhold", dialogParams: {callID: this.id, ...this.options, ...params}},(data: {holdState:string}) => {
+            if (data.holdState === 'held') {
+                this.holdStatus = true
+                this.dispatchEvent('hold', this)
+            } else {
+                this.holdStatus = false
+                this.dispatchEvent('unhold', this)
+            }
+        }, data => {})
+	}
+
+    toggleHold(params?: object) {
+        this.rpc.call(vertoModify, {action: "toggleHold", dialogParams: {callID: this.id, ...this.options, ...params}},(data: {holdState:string}) => {
+            if (data.holdState === 'held') {
+                this.holdStatus = true
+                this.dispatchEvent('hold', this)
+            } else {
+                this.holdStatus = false
+                this.dispatchEvent('unhold', this)
+            }
+        }, data => {})
+	}
+
 }
 
 class Verto extends VertoBase{
@@ -131,24 +186,24 @@ class Verto extends VertoBase{
 		this.rpc = new JsonRpcClient(options.transportConfig, options.debug)
 		this.rpc.setEventHandler((method, params) => {
 			switch(method) {
-				case 'verto.answer': {
+				case vertoAnswer: {
 					let callID: string = params.callID
 					this.calls[callID].onAnswer(params.sdp)
 					break
 				}
-				case 'verto.media': {
+				case vertoMedia: {
 					let callID: string = params.callID
 					this.calls[callID].onMedia(params.sdp)
 					break
 				}
-				case 'verto.invite': {
+				case vertoInvite: {
 					let call = new VertoCall(this.options.rtcConfig,this.rpc,'',params.callID, {caller_id_name: params.caller_id_name, caller_id_number: params.caller_id_number}, this.options.ice_timeout, this.options.debug)
 					call.preSdp(params.sdp)
 					this.calls[params.callID] = call
 					this.dispatchEvent('invite',call)
 					break
 				}
-				case 'verto.bye': {
+				case vertoBye: {
 					let call = this.calls[params.callID]
 					call.clear()
 					delete this.calls[params.callID]
