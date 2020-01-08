@@ -273,6 +273,62 @@ call.answer(tracks)
 call.hangup()
 ```
 
+**dtmf**
+
+***Parameters***
+
+- None
+
+***Returns***
+
+- None
+
+```typescript
+call.dtmf()
+```
+
+**hold**
+
+***Parameters***
+
+- None
+
+***Returns***
+
+- None
+
+```typescript
+call.hold()
+```
+
+**unhold**
+
+***Parameters***
+
+- None
+
+***Returns***
+
+- None
+
+```typescript
+call.unhold()
+```
+
+**toggleHold**
+
+***Parameters***
+
+- None
+
+***Returns***
+
+- None
+
+```typescript
+call.toggleHold()
+```
+
 ### Instance variables
 
 **id**
