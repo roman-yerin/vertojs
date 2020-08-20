@@ -32,65 +32,65 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 const generateGUID = (typeof(window.crypto) !== 'undefined' && typeof(window.crypto.getRandomValues) !== 'undefined') ?
 function(): string {
-	let buf = new Uint16Array(8)
-	window.crypto.getRandomValues(buf)
+  let buf = new Uint16Array(8)
+  window.crypto.getRandomValues(buf)
     let S4 = function(num:number) {
-		let ret = num.toString(16)
-		while (ret.length < 4) {
-			ret = "0" + ret
-		}
-		return ret
-	}
-	return (S4(buf[0]) + S4(buf[1]) + "-" + S4(buf[2]) + "-" + S4(buf[3]) + "-" + S4(buf[4]) + "-" + S4(buf[5]) + S4(buf[6]) + S4(buf[7]))
+    let ret = num.toString(16)
+    while (ret.length < 4) {
+      ret = "0" + ret
+    }
+    return ret
+  }
+  return (S4(buf[0]) + S4(buf[1]) + "-" + S4(buf[2]) + "-" + S4(buf[3]) + "-" + S4(buf[4]) + "-" + S4(buf[5]) + S4(buf[6]) + S4(buf[7]))
 }
 
 :
 
 function(): string {
-	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-		let r = Math.random() * 16 | 0,
-		v = c == 'x' ? r : (r & 0x3 | 0x8)
-		return v.toString(16)
-	})
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    let r = Math.random() * 16 | 0,
+    v = c == 'x' ? r : (r & 0x3 | 0x8)
+    return v.toString(16)
+  })
 }
 
 
 interface VertoEventHandler {
-	code: {(data: any):void},
-	id: string
+  code: {(data: any):void},
+  id: string
 }
 
 class VertoBase {
 
-	private event_handlers: {[name: string]: Array<VertoEventHandler>} = {}
-	public debug: boolean
+  private event_handlers: {[name: string]: Array<VertoEventHandler>} = {}
+  public debug: boolean
 
-	constructor(debug?: boolean){
-		this.debug = debug
-	}
+  constructor(debug?: boolean){
+    this.debug = debug
+  }
 
-	subscribeEvent(name: string, handler: {(data:any):void}):string{
-		let id = generateGUID()
-		if(!this.event_handlers[name]) this.event_handlers[name] = []
-		this.event_handlers[name].push({id, code: handler})
-		return id 
-	}
+  subscribeEvent(name: string, handler: {(data:any):void}):string{
+    let id = generateGUID()
+    if(!this.event_handlers[name]) this.event_handlers[name] = []
+    this.event_handlers[name].push({id, code: handler})
+    return id 
+  }
 
-	unsubscribeEvent(name: string, handlerID?: string){
-		if(handlerID) {
-			this.event_handlers[name] = this.event_handlers[name].map((v, i, a) => { if(v.id == handlerID) return; else return v; })
-		} else {
-			this.event_handlers[name] = []
-		}
-	}
+  unsubscribeEvent(name: string, handlerID?: string){
+    if(handlerID) {
+      this.event_handlers[name] = this.event_handlers[name].map((v, i, a) => { if(v.id == handlerID) return; else return v; })
+    } else {
+      this.event_handlers[name] = []
+    }
+  }
 
-	dispatchEvent(name: string, data?: any){
-		if(this.debug) console.log('Dispatch', name, data)
-		if(this.event_handlers[name])
-		for(let h of this.event_handlers[name]){
-			h.code(data)
-		}
-	}
+  dispatchEvent(name: string, data?: any){
+    if(this.debug) console.log('Dispatch', name, data)
+    if(this.event_handlers[name])
+    for(let h of this.event_handlers[name]){
+      h.code(data)
+    }
+  }
 
 }
 

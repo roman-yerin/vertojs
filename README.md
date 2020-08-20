@@ -37,28 +37,28 @@ let verto = new Verto(options: VertoOptions)
 
 ```typescript
 interface VertoOptions {
-	transportConfig : JsonRpcClientParams 
-	// Verto transport configuration, check below
-	
-	rtcConfig?      : RTCConfiguration    
+  transportConfig : JsonRpcClientParams 
+  // Verto transport configuration, check below
+  
+  rtcConfig?      : RTCConfiguration    
     // RTCConfiguration object, as described here 
-	// https://developer.mozilla.org/en-US/docs/Web/API/RTCConfiguration
-	// The most important thing is iceServers item that should be set to go over NAT
-	
-	debug?          : boolean
-	// Set true to get some useful debug info in browser console 
-	
-	ice_timeout?    : number
-	// Milliseconds to stop waiting for ice candidates, default to 3000ms
+  // https://developer.mozilla.org/en-US/docs/Web/API/RTCConfiguration
+  // The most important thing is iceServers item that should be set to go over NAT
+  
+  debug?          : boolean
+  // Set true to get some useful debug info in browser console 
+  
+  ice_timeout?    : number
+  // Milliseconds to stop waiting for ice candidates, default to 3000ms
 }
 
 interface JsonRpcClientParams {
-	socketUrl       : string
-	// The URL where the verto interface lives
-	// wss://server.example.com:8082
+  socketUrl       : string
+  // The URL where the verto interface lives
+  // wss://server.example.com:8082
 
-	login           : string
-	passwd          : string
+  login           : string
+  passwd          : string
 }
 ```
 
@@ -69,27 +69,27 @@ You should register to verto to receive calls.
 The following code is a simplified example of using the handler function to auto answer the first incoming call and add first received audio track to some &lt;video&gt; element.
 ```typescript
 try {
-	let data = await verto.login()
+  let data = await verto.login()
 } catch (error) {
-	alert("Access denied")
-	return
+  alert("Access denied")
+  return
 }
 
 let local_stream = await navigator.mediaDevices.getUserMedia({audio:true})
 
 verto.subscribeEvent('invite', call => {
 
-	call.subscribeEvent('track', (track) => {
-		if(track.kind!='audio') return
-		
-		let stream = new MediaStream()
-		stream.addTrack(track)
-		
-		let el = document.getElementById('video')
-		el.srcObject = stream
-	})
+  call.subscribeEvent('track', (track) => {
+    if(track.kind!='audio') return
+    
+    let stream = new MediaStream()
+    stream.addTrack(track)
+    
+    let el = document.getElementById('video')
+    el.srcObject = stream
+  })
 
-	call.answer(local_stream.getTracks())
+  call.answer(local_stream.getTracks())
 })
 
 ```
@@ -104,13 +104,13 @@ let local_stream = await navigator.mediaDevices.getUserMedia({audio:true})
 let call = verto.call(local_stream.getTracks(), "9664")
 
 call.subscribeEvent('track', (track) => {
-	if(track.kind!='audio') return
-	
-	let stream = new MediaStream()
-	stream.addTrack(track)
+  if(track.kind!='audio') return
+  
+  let stream = new MediaStream()
+  stream.addTrack(track)
 
-	let el = document.getElementById('video')
-	el.srcObject = stream
+  let el = document.getElementById('video')
+  el.srcObject = stream
 })
 
 ```
@@ -132,28 +132,28 @@ let verto = new Verto(options: VertoOptions)
 
 ```typescript
 interface VertoOptions {
-	transportConfig : JsonRpcClientParams 
-	// Verto transport configuration, check below
-	
-	rtcConfig?      : RTCConfiguration    
+  transportConfig : JsonRpcClientParams 
+  // Verto transport configuration, check below
+  
+  rtcConfig?      : RTCConfiguration    
     // RTCConfiguration object, as described here 
-	// https://developer.mozilla.org/en-US/docs/Web/API/RTCConfiguration
-	// The most important thing is iceServers item that should be set to go over NAT
-	
-	debug?          : boolean
-	// Set true to get some useful debug info in browser console 
-	
-	ice_timeout?    : number
-	// Milliseconds to stop waiting for ice candidates, default to 3000ms
+  // https://developer.mozilla.org/en-US/docs/Web/API/RTCConfiguration
+  // The most important thing is iceServers item that should be set to go over NAT
+  
+  debug?          : boolean
+  // Set true to get some useful debug info in browser console 
+  
+  ice_timeout?    : number
+  // Milliseconds to stop waiting for ice candidates, default to 3000ms
 }
 
 interface JsonRpcClientParams {
-	socketUrl       : string
-	// The URL where the verto interface lives
-	// wss://server.example.com:8082
+  socketUrl       : string
+  // The URL where the verto interface lives
+  // wss://server.example.com:8082
 
-	login           : string
-	passwd          : string
+  login           : string
+  passwd          : string
 }
 ```
 **login**
@@ -203,7 +203,7 @@ let call = verto.call(tracks, destination, options)
 let isLogged = verto.isLogged()
 ```
 
-**logOut**
+**logout**
 
 ***Parameters***
 
@@ -214,7 +214,7 @@ let isLogged = verto.isLogged()
 - Void
 
 ```typescript
-verto.logOut()
+verto.logout()
 ```
 ### Events
 
@@ -225,17 +225,17 @@ Fires on incoming call. As a parameter handler will receive a [VertoCall](#Verto
 ```typescript
 verto.subscribeEvent('invite', call => {
 
-	call.subscribeEvent('track', (track) => {
-		if(track.kind!='audio') return
-		
-		let stream = new MediaStream()
-		stream.addTrack(track)
-		
-		let el = document.getElementById('video')
-		el.srcObject = stream
-	})
+  call.subscribeEvent('track', (track) => {
+    if(track.kind!='audio') return
+    
+    let stream = new MediaStream()
+    stream.addTrack(track)
+    
+    let el = document.getElementById('video')
+    el.srcObject = stream
+  })
 
-	call.answer(local_stream.getTracks())
+  call.answer(local_stream.getTracks())
 })
 ```
 
@@ -362,17 +362,17 @@ Fires when a MediaStreamTrack is received
 ```typescript
 verto.subscribeEvent('invite', call => {
 
-	call.subscribeEvent('track', (track) => {
-		if(track.kind!='audio') return
-		
-		let stream = new MediaStream()
-		stream.addTrack(track)
-		
-		let el = document.getElementById('video')
-		el.srcObject = stream
-	})
+  call.subscribeEvent('track', (track) => {
+    if(track.kind!='audio') return
+    
+    let stream = new MediaStream()
+    stream.addTrack(track)
+    
+    let el = document.getElementById('video')
+    el.srcObject = stream
+  })
 
-	call.answer(local_stream.getTracks())
+  call.answer(local_stream.getTracks())
 })
 ```
 
@@ -392,49 +392,49 @@ call.subscribeEvent('bye', cause => {
 
 ```typescript
 interface VertoCallOptions {
-	caller_id_number?   : string
-	caller_id_name?     : string
-	callee_id_number?   : string
-	callee_id_name?     : string
+  caller_id_number?   : string
+  caller_id_name?     : string
+  callee_id_number?   : string
+  callee_id_name?     : string
 }
 ```
 
 #### VertoOptions
 ```typescript
 interface VertoOptions {
-	transportConfig : JsonRpcClientParams 
-	// Verto transport configuration, check below
-	
-	rtcConfig?      : RTCConfiguration    
+  transportConfig : JsonRpcClientParams 
+  // Verto transport configuration, check below
+  
+  rtcConfig?      : RTCConfiguration    
     // RTCConfiguration object, as described here 
-	// https://developer.mozilla.org/en-US/docs/Web/API/RTCConfiguration
-	// The most important thing is iceServers item that should be set to go over NAT
-	
-	debug?          : boolean
-	// Set true to get some useful debug info in browser console 
-	
-	ice_timeout?    : number
-	// Milliseconds to stop waiting for ice candidates, default to 3000ms
+  // https://developer.mozilla.org/en-US/docs/Web/API/RTCConfiguration
+  // The most important thing is iceServers item that should be set to go over NAT
+  
+  debug?          : boolean
+  // Set true to get some useful debug info in browser console 
+  
+  ice_timeout?    : number
+  // Milliseconds to stop waiting for ice candidates, default to 3000ms
 }
 ```
 
 #### JsonRpcClientParams
 ```typescript
 interface JsonRpcClientParams {
-	socketUrl       : string
-	// The URL where the verto interface lives
-	// wss://server.example.com:8082
+  socketUrl       : string
+  // The URL where the verto interface lives
+  // wss://server.example.com:8082
 
-	login           : string
-	passwd          : string
+  login           : string
+  passwd          : string
 }
 ```
 
 #### CallDirection
 ```typescript
 enum CallDirection {
-	Incoming,
-	Outgoing
+  Incoming,
+  Outgoing
 }
 ```
 
