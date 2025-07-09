@@ -2,7 +2,8 @@
   "name": "vertojs",
   "version": "0.0.5",
   "description": "Verto FreeSWITCH interface",
-  "main": "dist/index.js",
+  "type": "module",
+  "main": "src/index.ts",
   "author": "Roman Yerin <r.yerin@ion.team>",
   "license": "BSD-3-Clause",
   "repository": {
